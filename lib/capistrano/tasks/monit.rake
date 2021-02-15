@@ -97,9 +97,12 @@ namespace :sidekiq do
       fetch(:sidekiq_service_name, "sidekiq_#{fetch(:application)}_#{fetch(:sidekiq_env)}") + (index ? "_#{index}" : '')
     end
 
-    def sidekiq_config
-      if fetch(:sidekiq_config)
-        "--config #{fetch(:sidekiq_config)}"
+    def sidekiq_config(role)
+      sidekiq_roles = Array(fetch(:sidekiq_roles))
+      role_name = role.roles_array.find { |role_name| sidekiq_roles.include?(role_name) }
+
+      if fetch(:"#{role_name}_config") || fetch(:sidekiq_config)
+        "--config #{fetch(:"#{role_name}_config") || fetch(:sidekiq_config)}"
       end
     end
 
